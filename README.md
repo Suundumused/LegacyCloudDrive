@@ -13,6 +13,8 @@ _______/![Alt text](https://drive.google.com/uc?export=download&id=1Z12AOlFaaMh3
 <p align="left">* Delete Files/Folders</p>
 <p align="left">* Multiuser interactions</p>
 
+<p align="left">* Interactions don't have a confirmation screen, so be careful.</p>
+
 <p align="center">--</p>
 
 <p align="center">support with donation PIX or PayPal</p>
