@@ -3,14 +3,14 @@
 
 _______/![Alt text](https://drive.google.com/uc?export=download&id=1QyTFu7tjGFE8EOlhefK-hiVpMRVswITR)
 
-<p align="center"># Resources</p>
-<p align="center">* Browse root defined folders and files</p>
-<p align="center">* Escape argument protection</p>
-<p align="center">* Upload Files</p>
-<p align="center">* Download Files</p>
-<p align="center">* Encrypt files for download</p>
-<p align="center">* Rename Files/Folders</p>
-<p align="center">* Delete Files/Folders</p>
+<p align="left"># Resources</p>
+<p align="left">* Browse root defined folders and files</p>
+<p align="left">* Escape argument protection</p>
+<p align="left">* Upload Files</p>
+<p align="left">* Download Files</p>
+<p align="left">* Encrypt files for download</p>
+<p align="left">* Rename Files/Folders</p>
+<p align="left">* Delete Files/Folders</p>
 
 <p align="center">--</p>
 
