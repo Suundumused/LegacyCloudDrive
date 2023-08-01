@@ -18,6 +18,7 @@
 <p align="left">* Rename Files/Folders</p>
 <p align="left">* Delete Files/Folders</p>
 <p align="left">* Multiuser interactions</p>
+<p align="left">* Use the 'refresh' and 'back' buttons in the interface instead of the browser.</p>
 
 <p align="center">--</p>
 
