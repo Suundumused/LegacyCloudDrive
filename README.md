@@ -1,7 +1,7 @@
 <p align="center"># LegacyCloudDrive --GNU General Public License v3.0 -- @Copyright 2023 by Caio Silva signed as Suundumused</p>
 <p align="center">Server App that allows your computer to be used as CloudDrive</p>
 
-_______/![Alt text](https://drive.google.com/uc?export=download&id=1QyTFu7tjGFE8EOlhefK-hiVpMRVswITR)
+_______/![Alt text](https://drive.google.com/uc?export=download&id=1Z12AOlFaaMh32jC589JLOhJVePWI0_Ex)
 
 <p align="left"># Resources</p>
 <p align="left">* Browse root defined folders and files</p>
