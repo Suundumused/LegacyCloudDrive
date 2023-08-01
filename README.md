@@ -3,7 +3,10 @@
 
 _______/![Alt text](https://drive.google.com/uc?export=download&id=1Z12AOlFaaMh32jC589JLOhJVePWI0_Ex)
 
+<p align="left">* Interactions don't have a confirmation screen, so be careful.</p>
+
 <p align="left"># Resources</p>
+
 <p align="left">* Browse root defined folders and files</p>
 <p align="left">* Escape argument protection</p>
 <p align="left">* Upload Files</p>
@@ -12,8 +15,6 @@ _______/![Alt text](https://drive.google.com/uc?export=download&id=1Z12AOlFaaMh3
 <p align="left">* Rename Files/Folders</p>
 <p align="left">* Delete Files/Folders</p>
 <p align="left">* Multiuser interactions</p>
-
-<p align="left">* Interactions don't have a confirmation screen, so be careful.</p>
 
 <p align="center">--</p>
 
