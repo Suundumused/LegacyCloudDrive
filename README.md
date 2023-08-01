@@ -11,6 +11,7 @@ _______/![Alt text](https://drive.google.com/uc?export=download&id=1Z12AOlFaaMh3
 <p align="left">* Encrypt files for download</p>
 <p align="left">* Rename Files/Folders</p>
 <p align="left">* Delete Files/Folders</p>
+<p align="left">* Multiuser interactions</p>
 
 <p align="center">--</p>
 
