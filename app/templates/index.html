@@ -1,0 +1,318 @@
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="author" content="colorlib.com">
+  <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+  <div class="s01">
+    <div id="popup" class="hidden">
+      <span id="popupCloseButton">&times;</span>
+      <p id="popupMessage"></p>
+    </div>
+    <div>
+      <fieldset>
+        <legend>user_id: {{user_id}}</legend>
+      </fieldset>
+      <div class="inner-form">
+        <div class="input-field third-wrap">
+          <button class="Home" type="button" id="btnsearch" onclick="init()">root\</button>
+        </div>
+        <div class="input-field third-wrap">
+          <button class="back" type="button" id="btnsearch" onclick="back()">
+            < Back</button>
+        </div>
+        <div class="input-field first-wrap">
+          <input id="search" type="text" placeholder="Search File/Folder" />
+        </div>
+        <div class="input-field third-wrap">
+          <button class="uploadbtn" type="button" id="btnsearch">
+            <form action="/upload" method="post" enctype="multipart/form-data" class="inner-form2" id="upload">
+              <input id="filer" type="file" name="file">
+              <input id="typer" type="submit" value="Upload">
+            </form>
+          </button>
+        </div>
+      </div>
+      <div class="inner-form">
+        <div class="input-field third-wrap">
+          <button class="Refresh" type="button" id="btnsearch" onclick="refresh()">Reload</button>
+        </div>
+        <div class="input-field third-wrap">
+          <form action="/mkdir" method="post" enctype="multipart/form-data" class="inner-form3" id="mkdir">
+            <input type="text" id="search2" name="dir_name" placeholder="Folder Name" required>
+            <button type="submit" class="dir" id="btnsearch">Make Folder</button>
+          </form>
+        </div>
+        <div class="input-field third-wrap">
+          <button class="btn-search" type="button" id="btnsearch" onclick="deletefilefolder('null', true)">Delete Folder
+            ( ! )</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s02">
+    <fieldset>
+      <legend>{{CPath}}</legend>
+    </fieldset>
+  </div>
+  <div class="container">
+    <ul id="files-icons"></ul>
+    <ul id="files"></ul>
+  </div>
+  <script>
+    const dotRegex = /\./;
+
+    const searchBox = document.getElementById('search');
+    const myList = document.getElementById('files');
+    var listItems = myList.getElementsByTagName('li');
+
+    var ListFiles = {{ ListFiles | tojson }};
+
+    var ul = document.getElementById("files");
+    var ul0 = document.getElementById("files-icons");
+
+    searchBox.addEventListener('input', function () {
+      const searchTerm = searchBox.value.toLowerCase();
+
+      for (const listItem of listItems) {
+        const textContent = listItem.textContent.toLowerCase();
+        if (textContent.includes(searchTerm)) {
+          listItem.classList.add('visible');
+        } else {
+          listItem.classList.remove('visible');
+        }
+      }
+    });
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    };
+
+    function init() {
+      window.location.assign("/host");
+    };
+
+    function back() {
+      window.location.assign("/return");
+    };
+
+    function refresh() {
+      window.location.assign("/refresh");
+    };
+
+    function renamefilefolder(oldfilevalue, filevalue, isafolder) {
+      const postData = {
+        old: oldfilevalue,
+        File: filevalue,
+        isfolder: isafolder
+      };
+      const fetchConfig = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      };
+
+      fetch('/rename', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setTimeout(() => { window.location.href = '/refresh'; }, 500);
+        })
+        .catch(error => {
+          setTimeout(() => { window.location.href = '/refresh'; }, 500);
+        });
+    };
+
+    function deletefilefolder(filevalue, isafolder) {
+      popup.classList.remove('hidden');
+      popup.textContent = "Deleting file/folder...";
+
+      const postData = {
+        File: filevalue,
+        isfolder: isafolder
+      };
+      const fetchConfig = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      };
+
+      fetch('/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (isafolder == true) {
+            setTimeout(() => { window.location.href = '/return'; }, 1000);
+          } else {
+            setTimeout(() => { window.location.href = '/refresh'; }, 500);
+          };
+        })
+        .catch(error => {
+          if (isafolder == true) {
+            setTimeout(() => { window.location.href = '/return'; }, 1000);
+          } else {
+            setTimeout(() => { window.location.href = '/refresh'; }, 500);
+          };
+        });
+    };
+
+    function listfiles() { //ListFiles received the array in html |tojson, will create buttons having the name of each being the id
+      ListFiles.forEach(function (e) {
+
+        var imgElement = document.createElement('img');
+        var li = document.createElement('li');
+        var deletebtn = document.createElement('button');
+        var imgdeletebtn = document.createElement('img');
+        var renamebtn = document.createElement('button');
+        var imgrenamebtn = document.createElement('img');
+        var inputText = document.createElement("input");
+        /*var spacer = document.createElement('div');*/
+
+        textNode = document.createTextNode(e);
+
+        if (e.includes(".")) {
+          imgElement.src = "{{ url_for('static', filename='file.svg') }}";
+          imgdeletebtn.src = "{{ url_for('static', filename='cross-octagon.svg') }}";
+
+          deletebtn.append(imgdeletebtn);
+
+          deletebtn.addEventListener('click', function () {
+            deletefilefolder(e, false);
+          });
+          imgElement.addEventListener('click', function handleClick(event) {
+            popup.classList.remove('hidden');
+            popup.textContent = "Please wait, compressing file...";
+
+            window.location.assign("/download?File=" + e);
+
+            setTimeout(() => { popup.classList.add('hidden'); }, 1000);
+
+          });
+        } else {
+          imgElement.src = "{{ url_for('static', filename='folder.svg') }}";
+
+          imgElement.addEventListener('click', function handleClick(event) {
+            window.location.assign("/root?Paths=" + e);
+          });
+        }
+
+        renamebtn.addEventListener('click', function () {
+          let inputElement = document.querySelector('.' + e.replace(/ /g, '_').replace(/\./g, 'dotdot'));
+
+          renamefilefolder(e, inputElement.value, true);
+        });
+
+        inputText.setAttribute("type", "text"); // Set the type to "text"
+        inputText.setAttribute("id", "search4");
+        inputText.setAttribute("class", e.replace(/ /g, '_').replace(/\./g, 'dotdot')); // Set an ID for the element (optional)
+        inputText.setAttribute("placeholder", "Rename"); // Set a placeholder text (optional)
+
+        imgrenamebtn.src = "{{ url_for('static', filename='PENCIL.svg') }}";
+        renamebtn.append(imgrenamebtn);
+
+        renamebtn.classList.add('rename-button');
+
+        deletebtn.classList.add('delete-button');
+        imgElement.classList.add('folder-icon');
+        li.classList.add('list-item');
+
+        /*spacer.style.width = '100%';*/
+
+        imgrenamebtn.style.width = '100%';
+        imgrenamebtn.style.height = '100%';
+        imgrenamebtn.style.padding = '0';
+        imgrenamebtn.style.margin = '0';
+
+        renamebtn.style.backgroundColor = '#00000000';
+        renamebtn.style.maxWidth = '44px';
+        renamebtn.style.maxHeight = '44px';
+        renamebtn.style.paddingLeft = '3px';
+        renamebtn.style.paddingRight = '8px';
+        renamebtn.style.paddingTop = '0px';
+
+        renamebtn.style.paddingBottom = '0px';
+        renamebtn.style.float = 'right';
+
+        renamebtn.style.margin = '0';
+
+        imgdeletebtn.style.width = '100%';
+        imgdeletebtn.style.height = '100%';
+        imgdeletebtn.style.padding = '0';
+        imgdeletebtn.style.margin = '0';
+
+        deletebtn.style.backgroundColor = '#00000000';
+        deletebtn.style.maxWidth = '25px';
+        deletebtn.style.maxHeight = '25px';
+        deletebtn.style.paddingLeft = '3px';
+        deletebtn.style.paddingRight = '3px';
+        deletebtn.style.float = 'right';
+        deletebtn.style.padding = '0';
+        deletebtn.style.margin = '0';
+
+        imgElement.style.maxWidth = '25px';
+        imgElement.style.paddingLeft = '2px';
+        imgElement.style.paddingRight = '3px';
+
+        li.append(imgElement);
+        li.append(textNode);
+        /*li.append(spacer);*/
+
+        if (e.includes(".")) {
+          li.append(deletebtn);
+        };
+
+        li.append(renamebtn);
+        li.append(inputText);
+
+        ul.append(li);
+        ListFiles = []
+      })
+    };
+
+    listfiles(ListFiles);
+
+    const searchTerm = searchBox.value.toLowerCase();
+
+    for (const listItem of listItems) {
+      const textContent = listItem.textContent.toLowerCase();
+      if (textContent.includes(searchTerm)) {
+        listItem.classList.add('visible');
+      } else {
+        listItem.classList.remove('visible');
+      };
+    };
+
+  </script>
+</body>
+
+</html>

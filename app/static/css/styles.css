@@ -1,0 +1,277 @@
+body {
+  background-color: #868686;
+  color: #FFC0CB;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+.container {
+  max-width: 75%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Style the legend */
+legend {
+  color: #00ffe5;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Style the input field */
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #333333;
+  background-color: #ffffff;
+  color: #333333;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+  border-color: #009688;
+}
+
+#search2{
+  width: 67%;
+}
+
+#search4{
+  width: 25%;
+  float: right;
+  padding-right: 5px;
+  margin: 0%;
+}
+
+/* Style the buttons */
+button {
+  width: 100%;
+  padding: 10px 20px;
+  border: none;
+  background-color: #009688;
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.Home {
+  background-color: #03a9f4;
+}
+
+button.back {
+  background-color: #00796b;
+}
+
+button.Refresh {
+  background-color: #03a9f4;
+}
+
+button.dir {
+  background-color: #ffcc00;
+  width: 32%;
+
+}
+
+button.btn-search {
+  background-color: #f44336;
+}
+
+button.uploadbtn {
+  background-color: #c3c3c3;
+  white-space: nowrap;
+  padding:0;
+}
+
+button:hover {
+  background-color: #7e7e7e;
+}
+
+/* Style the lists */
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul li {
+  padding: 10px;
+  border-bottom: 1px solid #cccccc;
+}
+
+/* Style the icons */
+img {
+  max-width: 25px;
+  padding-right: 5px;
+}
+
+/* Style the delete button */
+button img {
+  max-width: 100%;
+  height: auto;
+  padding: 0;
+  margin: 0;
+}
+
+/* Flexbox for .inner-form */
+.inner-form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.inner-form2 {
+  white-space: nowrap;
+}
+
+.inner-form3 {
+  white-space: nowrap;
+}
+
+/* Adjust the width of each form element */
+.input-field {
+  flex: 1; /* Make the input field and buttons fill the available size */
+  margin: 5px; /* Add some spacing between form elements */
+}
+
+/* Style the spacer */
+/* Uncomment this if you want to add a spacer */
+/*
+.spacer {
+  width: 100%;
+  height: 20px;
+}
+*/
+
+/* Style the links */
+a {
+  color: #009688;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #00796b;
+}
+
+/* ... Previous CSS rules ... */
+
+/* CSS for dynamically generated elements */
+.list-item {
+  padding: 10px;
+  border-bottom: 1px solid #cccccc;
+  transition: background-color 0.3s ease; /* Add transition for background color */
+}
+
+.list-item:hover {
+  background-color: #e0e0e0; /* Change background color on hover */
+}
+
+.folder-icon {
+  max-width: 25px;
+  padding-right: 5px;
+  transition: transform 0.3s ease; /* Add transition for the folder icon */
+}
+
+.folder-icon:hover {
+  transform: scale(1.2); /* Increase size of the folder icon on hover */
+}
+
+.delete-button {
+  max-width: 25px;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  transition: opacity 0.3s ease; /* Add transition for the delete button */
+}
+
+.delete-button:hover {
+  opacity: 0.7; /* Reduce opacity of the delete button on hover */
+}
+
+#popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  z-index: 1;
+}
+
+.hidden {
+  display: none;
+}
+
+#popupCloseButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+#popupCloseButton:hover {
+  color: red;
+}
+
+li.visible {
+  display: block; /* Exibimos os elementos marcados como "visible" */
+}
+
+li {
+  display: none; /* Começam ocultos por padrão */
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Style the form */
+
+#upload{
+  font-family: 'Poppins', sans-serif;
+  padding:0;
+  margin: 0;
+}
+
+#mkdir{
+  font-family: 'Poppins', sans-serif;
+  padding:0;
+  margin: 0;
+}
+
+#filer {
+  font-family: 'Poppins', sans-serif;
+  padding-left:10px;
+  margin: 0;
+  color: #333;
+}
+
+#typer {
+  margin: 0;
+  padding: 10px 10px;
+  border: none;
+  background-color: #03a9f4;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#typer:hover {
+  background-color: #7e7e7e;
+}
+
+
+/* Add additional CSS rules for specific IDs or classes if needed */
+#delete-btn-xyz {
+  /* CSS rules for a specific delete button with ID 'delete-btn-xyz' */
+}
+
+#folder-icon-abc {
+  /* CSS rules for a specific folder icon with ID 'folder-icon-abc' */
+}
+
+/* ... Remaining CSS rules ... */
+
