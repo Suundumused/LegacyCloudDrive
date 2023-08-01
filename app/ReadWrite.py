@@ -12,7 +12,7 @@ class settings: #load config file (config.json).
         try:
             if not os.path.exists(filename):
                 
-                default_data={"KEY": "KSDJG43298Y543298TREKKJASYJR32459U432JREWNGM", "Target_Path": "C:\Users"}
+                default_data={"KEY": "KSDJG43298Y543298TREKKJASYJR32459U432JREWNGM", "Target_Path": r"C:/Users"}
                 
                 with contextlib.ExitStack() as stack:
                     file = stack.enter_context(open(filename, mode='w', encoding='utf-8', errors='ignore'))
@@ -28,7 +28,7 @@ class settings: #load config file (config.json).
                 return data
             
         except Exception as e:
-            default_data={"KEY": "KSDJG43298Y543298TREKKJASYJR32459U432JREWNGM", "Target_Path": "C:\Users"}
+            default_data={"KEY": "KSDJG43298Y543298TREKKJASYJR32459U432JREWNGM", "Target_Path": r"C:/Users"}
             
             print (e)
             
