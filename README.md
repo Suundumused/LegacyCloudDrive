@@ -4,6 +4,8 @@
 
 ![Alt text](https://drive.google.com/uc?export=download&id=1Z12AOlFaaMh32jC589JLOhJVePWI0_Ex)
 <p></p>
+<p align="center">* To access a folder or download a file, click on the item's icon in the list..</p>
+<p></p>
 <p align="center">* Interactions don't have a confirmation screen, so be careful.</p>
 <p></p>
 <p align="left"># Resources</p>
