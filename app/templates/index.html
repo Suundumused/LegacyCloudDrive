@@ -34,7 +34,7 @@
           <button class="uploadbtn" type="button" id="btnsearch">
             <form action="/upload" method="post" enctype="multipart/form-data" class="inner-form2" id="upload">
               <input id="filer" type="file" name="file">
-              <input id="typer" type="submit" value="Upload">
+              <input id="typer" type="submit" value="Upload" onclick="uploadpopup()">
             </form>
           </button>
         </div>
@@ -104,6 +104,11 @@
 
     function refresh() {
       window.location.assign("/refresh");
+    };
+
+    function uploadpopup(){
+      popup.classList.remove('hidden');
+      popup.textContent = "Uploading file...";
     };
 
     function renamefilefolder(oldfilevalue, filevalue, isafolder) {
