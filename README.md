@@ -14,7 +14,7 @@
 <p align="left">* Escape argument protection</p>
 <p align="left">* Upload Files</p>
 <p align="left">* Download Files</p>
-<p align="left">* Encrypt files for download</p>
+<p align="left">* Encrypt files</p>
 <p align="left">* Rename Files/Folders</p>
 <p align="left">* Delete Files/Folders</p>
 <p align="left">* Multiuser interactions</p>
