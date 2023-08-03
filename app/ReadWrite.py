@@ -2,6 +2,10 @@ import threading
 import os
 import sys
 import contextlib
+
+import zipfile
+import pyzipper
+
 import json
 import io
 
@@ -33,6 +37,46 @@ class settings: #load config file (config.json).
             print (e)
             
             return default_data
+        
+class protection: #It reduces the risk of data leakage by 50%, compressing the zip file with the password being the user id.
+    def zip_file_with_password(source_file, zip_filename, password):
+        try:
+            # Read the contents of the source file
+            with open(source_file, 'rb') as file:
+                data = file.read()
+
+            filename = os.path.basename(source_file)
+
+        # Create a new zip file and encrypt it with a password
+            with pyzipper.AESZipFile(zip_filename, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9, encryption=pyzipper.WZ_AES) as zf:
+                password = password.encode("utf-8")
+                zf.setpassword(password)
+
+            # Add the source file to the zip file
+                zf.writestr(filename, data)
+
+        except Exception as e:
+            print(e)
+
+    def antiescape(Paths): #Protect folders before the target folder from being accessed via escape parameters.
+        Filter = [r"cd", r"../", r"./", r".\\", r"..\\", r"~", r"..", r"cd..",
+                  r"cd /", r"cd/", r"cd ..", r"cd.", r"cd .", r". .", r"cd \\", r"cd\\" , r"%", r"¨"]
+
+        Found = False
+
+        try:
+            for word in Filter:
+                if Paths.find(word) != -1:
+                    Found = True
+
+            if Paths.find("..\\") != -1 or Paths.find(".\\") != -1 or Found == True:
+                return True
+
+            else:
+                return False
+
+        except Exception as e:
+            return True
 
 class program:
     

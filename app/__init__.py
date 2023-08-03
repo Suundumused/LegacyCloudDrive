@@ -6,11 +6,13 @@ from Users import Data #stores the users id and their currently accessed folders
 import zipfile
 import pyzipper
 
+import random
 import re
 import io
 import json
 import contextlib
 import threading
+import argparse
 import os
 import sys
 import ReadWrite #Used to process per-user read data.
@@ -19,30 +21,7 @@ import shutil
 
 class settings: #load config file (config.json).
     def read_json_file(filename):
-        try:
-            if not os.path.exists(filename):
-                
-                default_data={"KEY": "KSDJG43298Y543298TREKKJASYJR32459U432JREWNGM", "Target_Path": r"C:/Users"}
-                
-                with contextlib.ExitStack() as stack:
-                    file = stack.enter_context(open(filename, mode='w', encoding='utf-8', errors='ignore'))
-                    json.dump(default_data, file, indent=4)
-                                        
-                return default_data
-            
-            else:
-                with contextlib.ExitStack() as stack:
-                    file = stack.enter_context(io.open(filename, mode='r', encoding='utf-8', errors='ignore'))
-                    data = json.load(file)
-                                        
-                return data
-            
-        except Exception as e:
-            default_data={"KEY": "KSDJG43298Y543298TREKKJASYJR32459U432JREWNGM", "Target_Path": r"C:/Users"}
-            
-            print (e)
-            
-            return default_data
+        return ReadWrite.settings.read_json_file(filename)
             
 # Function to write JSON data to a file
 
@@ -79,43 +58,10 @@ class user:
 
 class protection: #It reduces the risk of data leakage by 50%, compressing the zip file with the password being the user id.
     def zip_file_with_password(source_file, zip_filename, password):
-        try:
-            # Read the contents of the source file
-            with open(source_file, 'rb') as file:
-                data = file.read()
-
-            filename = os.path.basename(source_file)
-
-        # Create a new zip file and encrypt it with a password
-            with pyzipper.AESZipFile(zip_filename, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9, encryption=pyzipper.WZ_AES) as zf:
-                password = password.encode("utf-8")
-                zf.setpassword(password)
-
-            # Add the source file to the zip file
-                zf.writestr(filename, data)
-
-        except Exception as e:
-            print(e)
+        return ReadWrite.protection.zip_file_with_password(source_file, zip_filename, password)
 
     def antiescape(Paths): #Protect folders before the target folder from being accessed via escape parameters.
-        Filter = [r"cd", r"../", r"./", r".\\", r"..\\", r"~", r"..", r"cd..",
-                  r"cd /", r"cd/", r"cd ..", r"cd.", r"cd .", r". .", r"cd \\", r"cd\\" , r"%", r"¨"]
-
-        Found = False
-
-        try:
-            for word in Filter:
-                if Paths.find(word) != -1:
-                    Found = True
-
-            if Paths.find("..\\") != -1 or Paths.find(".\\") != -1 or Found == True:
-                return True
-
-            else:
-                return False
-
-        except Exception as e:
-            return True
+        return ReadWrite.protection.antiescape(Paths)
 
 class program:
     ConfigFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config")
@@ -193,6 +139,8 @@ class program:
             user_id = user.VMKUser()
 
             ReadWrite.program.TargetUserID = user_id
+            
+            randomFileSeed = random.randint(0,999)
 
             try: #File is the name of the selected file. the download will be the folder the current user is in + File
                 File = request.args.get('File')
@@ -213,9 +161,9 @@ class program:
                         finally: #Removes pending generated zip files for download.
                             trash.PendingFilesToDelete.remove(value)
 
-                    protection.zip_file_with_password(file_path, ReadWrite.program.TargetPath+ReadWrite.program.CPath+r"\\"+os.path.splitext(filename)[0]+".zip", user_id) #convert it to zip before the download.
+                    protection.zip_file_with_password(file_path, ReadWrite.program.TargetPath+ReadWrite.program.CPath+r"\\"+os.path.splitext(filename)[0] + str(randomFileSeed)+".zip", user_id) #convert it to zip before the download.
 
-                    new_file_path=ReadWrite.program.TargetPath+ReadWrite.program.CPath + r"\\" + str(os.path.splitext(filename)[0] + ".zip")
+                    new_file_path=ReadWrite.program.TargetPath+ReadWrite.program.CPath + r"\\" + str(os.path.splitext(filename)[0] + str(randomFileSeed) + ".zip")
 
                     trash.PendingFilesToDelete.append(new_file_path) #add the zipfile to pending destroy.
 
@@ -249,11 +197,40 @@ class program:
                     if file.filename == '':
                         return render_template("index.html", ListFiles=["No selected file"], CPath=ReadWrite.program.CPath, user_id=user_id)
                     # If the file exists and is valid, save it to a designated folder (e.g., 'uploads')
+                    
+                    for value in trash.PendingFilesToDelete:
+                        try:
+                            os.remove(value)
+
+                        except:
+                            pass
+
+                        finally: #Removes pending generated zip files for download.
+                            trash.PendingFilesToDelete.remove(value)
 
                     if file:
                         try:
                             file_path = ReadWrite.program.TargetPath+ReadWrite.program.CPath
+                            
                             file.save(os.path.join(file_path, file.filename))
+                            
+                            filename = os.path.basename(file_path+ r"\\" + file.filename)
+                                                        
+                            protection.zip_file_with_password(file_path + r"\\" + file.filename, file_path+r"\\"+os.path.splitext(filename)[0]+".zip", user_id) #After uploading, delta the original file leaving only the generated .zip.
+                            
+                            old_file_path = file_path+ r"\\" + file.filename
+                            
+                            trash.PendingFilesToDelete.append(old_file_path)
+                            
+                            for value in trash.PendingFilesToDelete:
+                                try:
+                                    os.remove(value)
+
+                                except:
+                                    pass
+
+                                finally: #Removes pending generated zip files for download.
+                                    trash.PendingFilesToDelete.remove(value)
 
                             return redirect("/refresh")
 
@@ -308,22 +285,37 @@ class program:
                 return render_template("index.html", ListFiles=["Access violation."], CPath=ReadWrite.program.CPath, user_id=user_id)
             
             else:
-                try:
+                try: #Try deleting folder as folder, if not try as file.
                     if bool(isfolder) == True:
+                        try:
+                            file_path = ReadWrite.program.TargetPath+ReadWrite.program.CPath
 
-                        file_path = ReadWrite.program.TargetPath+ReadWrite.program.CPath
+                            shutil.rmtree(file_path)
 
-                        shutil.rmtree(file_path)
+                            return redirect("/refresh")
+                        
+                        except:
+                            file_path = ReadWrite.program.TargetPath+ReadWrite.program.CPath
+                            # Deleta o arquivo da máquina do hospedeiro
+                            os.remove(file_path)
 
-                        return redirect("/refresh")
+                            return redirect("/refresh")
+                        
+                    else: #Try deleting file as file, if not try as folder.
+                        try: 
+                            file_path = ReadWrite.program.TargetPath+ReadWrite.program.CPath + r"\\"+ File
+                            # Deleta o arquivo da máquina do hospedeiro
+                            os.remove(file_path)
 
-                    else:
-                        file_path = ReadWrite.program.TargetPath+ReadWrite.program.CPath+r"\\"+File
-                        # Deleta o arquivo da máquina do hospedeiro
-                        os.remove(file_path)
+                            return redirect("/refresh")
+                        
+                        except:
+                            file_path = ReadWrite.program.TargetPath+ReadWrite.program.CPath + r"\\"+ File
 
-                        return redirect("/refresh")
+                            shutil.rmtree(file_path)
 
+                            return redirect("/refresh")
+                            
                 except OSError as e:
                     # Trata caso ocorra algum erro ao deletar o arquivo
                     return render_template("index.html", ListFiles=[str(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
@@ -386,8 +378,28 @@ class program:
         else:
             return render_template("index.html", ListFiles=ReadWrite.program.listdir("Wrong methods: 'POST, PULL, PATCH'"), CPath=ReadWrite.program.CPath, user_id=user_id)
 
-    #app.run(debug=True, threaded=True, port=8080)
-    serve(app, host="0.0.0.0", port=8080)
+    
+    parser = argparse.ArgumentParser(
+        description='My CloudDrive Server',
+        epilog="Started!")
+    
+    parser.add_argument("-ip","--host", help="Set/Get Local IPV4, default = '0.0.0.0'", type=str, default="0.0.0.0")#criar argumento
+    parser.add_argument("-p","--port", help="Set Port Forwarding, default = 8080", type=int, default=8080)
+    
+    args = parser.parse_args()
+    
+    if args.host == "0.0.0.0":
+        print("Server running Forwarded at: " + str(args.port))
+    
+    else:
+        print("Server running at: " + str(args.host) + ":" + str(args.port))
+    
+    try:
+        #app.run(debug=True, threaded=True, port=args.port) #development only.
+        serve(app, host=args.host, port=args.port)
+        
+    except Exception as e:
+        print(e)
 
 
 if __name__ == "__main__":
