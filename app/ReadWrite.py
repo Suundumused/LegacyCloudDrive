@@ -34,7 +34,7 @@ class settings: #load config file (config.json).
         except Exception as e:
             default_data={"KEY": "KSDJG43298Y543298TREKKJASYJR32459U432JREWNGM", "Target_Path": r"C:/Users"}
             
-            print (e)
+            repr(e)
             
             return default_data
         
@@ -56,7 +56,7 @@ class protection: #It reduces the risk of data leakage by 50%, compressing the z
                 zf.writestr(filename, data)
 
         except Exception as e:
-            print(e)
+            repr(e)
 
     def antiescape(Paths): #Protect folders before the target folder from being accessed via escape parameters.
         Filter = [r"cd", r"../", r"./", r".\\", r"..\\", r"~", r"..", r"cd..",
@@ -75,12 +75,20 @@ class protection: #It reduces the risk of data leakage by 50%, compressing the z
             else:
                 return False
 
-        except Exception as e:
+        except:
             return True
 
 class program:
+    config_name = 'config'
     
-    ConfigFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config")
+    if getattr(sys, 'frozen', False):  #-----ATUALIZADO-----
+    # Executando como executable (PyInstaller)
+        path = os.path.dirname(sys.executable)
+    else:   
+        # Executando como  script .py
+        path = os.path.dirname(os.path.abspath(sys.argv[0]))
+    
+    ConfigFolder = os.path.join(path, config_name)
     ConfigPath = ConfigFolder + r"\\" + "config.json"
     
     TargetUserOrderID=0
@@ -118,7 +126,7 @@ class program:
             return program.List
 
         except Exception as e:
-            return [str(e)]
+            return [repr(e)]
         
         finally:
             program.saveToCurrentUser() #save to user_id for each interaction.
@@ -133,7 +141,7 @@ class program:
             return program.List
 
         except Exception as e:
-            return [str(e)]
+            return [repr(e)]
         
         finally:
             program.saveToCurrentUser()
@@ -152,7 +160,7 @@ class program:
             
             program.CPath = program.CPath+"\\"+SelectedFolder
             
-            return [str(e)]
+            return [repr(e)]
 
         finally:
             program.saveToCurrentUser()

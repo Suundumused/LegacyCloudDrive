@@ -1,3 +1,4 @@
+import socket
 from flask import *
 from fileinput import filename
 from waitress import serve
@@ -64,11 +65,28 @@ class protection: #It reduces the risk of data leakage by 50%, compressing the z
         return ReadWrite.protection.antiescape(Paths)
 
 class program:
-    ConfigFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config")
-    ConfigPath = ConfigFolder + r"\\" + "config.json"
-        
-    template_folder1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+    path = ""
     
+    if getattr(sys, 'frozen', False):  #-----ATUALIZADO-----
+    # Executando como executable (PyInstaller)
+        path = os.path.dirname(sys.executable)
+    else:   
+        # Executando como  script .py
+        path = os.path.dirname(os.path.abspath(sys.argv[0]))
+    
+    config_name = 'config'
+    
+    ConfigFolder = os.path.join(path, config_name)
+    ConfigPath = ConfigFolder + r"\\" + "config.json"
+    
+    config_name2 = 'templates'
+    
+    template_folder1 = os.path.join(path, config_name2)
+    
+    config_name3 = 'static'
+    
+    static_folder = os.path.join(path, config_name3)
+        
     app = Flask(__name__, template_folder=template_folder1)
 
     app.secret_key = settings.read_json_file(ConfigPath)["KEY"] #Key used to generate users id.
@@ -127,7 +145,7 @@ class program:
                     return render_template("index.html", ListFiles=ReadWrite.program.listdir(Paths), CPath=ReadWrite.program.CPath, user_id=user_id) #Paths is the address of the loaded folder, ReadWrite.py returns a list of folders and files, the list is passed here to CPath in HTML.
 
                 except Exception as e:
-                    return render_template("index.html", ListFiles=[str(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
+                    return render_template("index.html", ListFiles=[repr(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
 
         else:
             return render_template("index.html", ListFiles=ReadWrite.program.listdir("Wrong methods: 'POST, PULL, PATCH'"), CPath=ReadWrite.program.CPath, user_id=user_id)
@@ -170,7 +188,7 @@ class program:
                     return send_file(new_file_path, as_attachment=True) #set zipfile to download.
 
             except Exception as e:
-                return render_template("index.html", ListFiles=[str(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
+                return render_template("index.html", ListFiles=[repr(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
 
         else:
             return render_template("index.html", ListFiles=ReadWrite.program.listdir("Wrong methods: 'POST, PULL, PATCH'"), CPath=ReadWrite.program.CPath, user_id=user_id)
@@ -185,7 +203,7 @@ class program:
             if request.method == 'POST':
                 # Check if the POST request has a file part
                 if 'file' not in request.files:
-                    return render_template("index.html", ListFiles=["No file part"], CPath=ReadWrite.program.CPath, user_id=user_id)
+                    return render_template("index.html", ListFiles=["No file path"], CPath=ReadWrite.program.CPath, user_id=user_id)
 
                 file = request.files['file']
                 
@@ -235,7 +253,7 @@ class program:
                             return redirect("/refresh")
 
                         except Exception as e:
-                            return render_template("index.html", ListFiles=[str(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
+                            return render_template("index.html", ListFiles=[repr(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
 
         else:
             return render_template("index.html", ListFiles=ReadWrite.program.listdir("Wrong methods: 'GET, PULL, PATCH'"), CPath=ReadWrite.program.CPath, user_id=user_id)
@@ -264,7 +282,7 @@ class program:
                     return redirect(str("/root?Paths=" + dir_name))
 
                 except Exception as e:
-                    return render_template("index.html", ListFiles=[str(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
+                    return render_template("index.html", ListFiles=[repr(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
 
         else:
             return render_template("index.html", ListFiles=ReadWrite.program.listdir("Wrong methods: 'GET, PULL, PATCH'"), CPath=ReadWrite.program.CPath, user_id=user_id)
@@ -318,7 +336,7 @@ class program:
                             
                 except OSError as e:
                     # Trata caso ocorra algum erro ao deletar o arquivo
-                    return render_template("index.html", ListFiles=[str(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
+                    return render_template("index.html", ListFiles=[repr(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
 
         else:
             return render_template("index.html", ListFiles=ReadWrite.program.listdir("Wrong methods: 'GET', 'POST, PULL, PATCH'"), CPath=ReadWrite.program.CPath, user_id=user_id)
@@ -349,7 +367,7 @@ class program:
 
                 except OSError as e:
                     # Trata caso ocorra algum erro ao deletar o arquivo
-                    return render_template("index.html", ListFiles=[str(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
+                    return render_template("index.html", ListFiles=[repr(e)], CPath=ReadWrite.program.CPath, user_id=user_id)
 
         else:
             return render_template("index.html", ListFiles=ReadWrite.program.listdir("Wrong methods: 'GET, PULL, PATCH'"), CPath=ReadWrite.program.CPath, user_id=user_id)
@@ -389,7 +407,15 @@ class program:
     args = parser.parse_args()
     
     if args.host == "0.0.0.0":
-        print("Server running Forwarded at: " + str(args.port))
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(('10.255.255.255', 1))
+            
+            IP = s.getsockname()[0]
+        except:
+            IP = '127.0.0.1'
+        
+        print(f"Server running Forwarded at: {IP}:" + str(args.port))
     
     else:
         print("Server running at: " + str(args.host) + ":" + str(args.port))
@@ -399,13 +425,10 @@ class program:
         serve(app, host=args.host, port=args.port)
         
     except Exception as e:
-        print(e)
-
+        print(repr(e))
 
 if __name__ == "__main__":
 
     thread = threading.Thread(target=program)
-
-    # thread = threading.Thread(target=program.app.run(debug=False, threaded=True, host="0.0.0.0", port=8080))
 
     thread.start()
