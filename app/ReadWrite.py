@@ -9,6 +9,15 @@ import pyzipper
 import json
 import io
 
+if getattr(sys, 'frozen', False):  #-----ATUALIZADO-----
+    # Executando como executable (PyInstaller)
+    path = os.path.dirname(sys.executable)
+else:   
+    # Executando como  script .py
+    path = os.path.dirname(os.path.abspath(sys.argv[0]))
+
+sys.path.insert(1, os.path.join(path))
+
 from Users import Data #stores the users id and their currently accessed folders on the server. Prevents conflicts when many people access.
 
 class settings: #load config file (config.json).
